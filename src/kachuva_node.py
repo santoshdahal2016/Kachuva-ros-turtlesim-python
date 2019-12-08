@@ -1,17 +1,19 @@
 #!/usr/bin/env python
-# license removed for brevity
+# Ros related import
 import rospy
 import rospkg
-from std_msgs.msg import String
-import pygame
-import os
-import sys
-import time
 from geometry_msgs.msg import Twist
+
+# GUI related import
+import pygame
+
+# Time calculation
+import time
+
+# Math function for calculating trajectory
 from math import *
 
-rospack = rospkg.RosPack()
-
+# Color RGB Values
 red = (200, 0, 0)
 blue = (0, 0, 255)
 green = (0, 155, 0)
@@ -19,18 +21,23 @@ yellow = (155, 155, 0)
 white = (255, 255, 255)
 black = (0, 0, 0) 
 
+
+
+# Variable for storing Linear , angular and last command time(Command are runned for 1 Second)
 lin_vel = 0.0
 ang_vel = 0.0
 last_command_time_ = time.time()
 
-
+# Variable for storing robot position and orientation
 robot_x = 320
 robot_y = 240
 robot_orient = 0
 
+
+# pygames initialization and settings
 pygame.init()
 pygame.display.set_caption("kachuva")
-robot = pygame.image.load(rospack.get_path('kachuva')+ "/images/car60_40.png")
+robot = pygame.image.load(rospkg.RosPack().get_path('kachuva')+ "/images/car60_40.png")
 screen = pygame.display.set_mode((640,480))
 
 
@@ -38,14 +45,13 @@ screen = pygame.display.set_mode((640,480))
 def kachuva_node():
 	rospy.init_node('kachuva', anonymous=False)
 	rate = rospy.Rate(10) # 10hz
+	rospy.Subscriber("kachuva/cmd_vel", Twist,velocityCallback)
 
 
 	while not rospy.is_shutdown():
-		rospy.Subscriber("kachuva/cmd_vel", Twist,velocityCallback)
 		screen.fill(white)
 		update()
 		pygame.display.flip()
-
 		rate.sleep()
 
 
